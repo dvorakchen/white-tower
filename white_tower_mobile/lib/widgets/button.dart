@@ -108,7 +108,7 @@ class _ButtonState extends State<Button> {
         child: Align(
           alignment: Alignment.topCenter,
           child: Padding(
-            padding: EdgeInsets.only(top: verticalPadding),
+            padding: .only(top: verticalPadding),
             child: Container(
               height: _initialBodyHeight,
               width: width,

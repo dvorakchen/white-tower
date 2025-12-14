@@ -1,73 +1,20 @@
+// import 'package:animations/animations.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:white_tower_mobile/pages/game_level_screen.dart';
+import 'package:lottie/lottie.dart';
+import 'package:white_tower_mobile/models/pagination.dart';
 import 'package:white_tower_mobile/pages/table_of_subject_screen.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
+import 'package:white_tower_mobile/themes/common.dart';
+import 'package:white_tower_mobile/widgets/subject_card.dart';
 
 // 定义强调色
 const Color kPrimaryColor = Color(0xFF17A2B8); // 用于图标和强调
 const Color kAccentColor = Color(0xFFE0F7FA); // 用于背景或边框
 
-// --- 2. 列表项 Widget (SubjectCard) ---
-class SubjectCard extends StatelessWidget {
-  final Subject subject;
-
-  const SubjectCard({super.key, required this.subject});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      // 使用 Card 实现圆角和轻微阴影效果
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      elevation: 2, // 轻微阴影
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: InkWell(
-        // InkWell 提供点击水波纹效果
-        borderRadius: BorderRadius.circular(12.0),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              // 左侧图标区域
-              const SizedBox(width: 16.0),
-              // 中间文字区域
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      subject.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subject.subtitle,
-                      style: const TextStyle(fontSize: 13, color: Colors.grey),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              // 右侧箭头
-              const Icon(Icons.chevron_right, color: Colors.grey),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-final subjectListProvider = FutureProvider<List<Subject>>((ref) async {
+final subjectListProvider = FutureProvider<Pagination<Subject>>((ref) async {
   final subjectService = GetIt.instance<SubjectService>();
   return await subjectService.fetchSubjects();
 });
@@ -82,8 +29,9 @@ class SubjectListScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0, // 移除 AppBar 阴影
+        automaticallyImplyLeading: false,
+        backgroundColor: white,
+        elevation: 0,
         centerTitle: true,
         title: const Text(
           '白塔',
@@ -98,77 +46,59 @@ class SubjectListScreen extends HookConsumerWidget {
           ),
         ],
       ),
-      backgroundColor: Colors.grey[50], // 轻微的背景色以突出卡片
-      body: asyncSubjectList.when(
-        loading: () => const CircularProgressIndicator(),
-        error: (error, stackTrace) => Text('Error $error'),
-        data: (data) => ListView.builder(
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            final subject = data[index];
-            return OpenContainer(
-              closedBuilder: (context, action) {
-                return SubjectCard(subject: subject);
-              },
-              openBuilder: (context, action) {
-                // return GameOfLevelScreen(subject: subject);
-                return TableOfSubjectScreen(subject: subject);
-              },
-            );
-          },
+      backgroundColor: white,
+      body: Container(
+        padding: .symmetric(horizontal: 20),
+        child: asyncSubjectList.when(
+          loading: () => Padding(
+            padding: .only(bottom: 80),
+            child: Center(
+              child: SizedBox(
+                width: 320,
+                height: 320,
+                child: Lottie.asset('assets/animations/loading.json'),
+              ),
+            ),
+          ),
+          error: (error, stackTrace) => Text('Error $error'),
+          data: (data) => ListView.builder(
+            itemCount: data.list.length,
+            itemBuilder: (context, index) {
+              final subject = data.list[index];
+              return ListItem(subject: subject);
+            },
+          ),
         ),
       ),
     );
   }
 }
 
-/**
+class ListItem extends StatelessWidget {
+  final Subject subject;
 
- FutureBuilder(
-        future: subjectService.fetchSubjects(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                Padding(padding: EdgeInsets.all(8.0), child: Text('数据加载中...')),
-              ],
-            );
-          }
-          if (snapshot.hasError) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, color: Colors.red, size: 60),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Text('错误: ${snapshot.error}'),
-                ),
-              ],
-            );
-          }
+  const ListItem({super.key, required this.subject});
 
-          if (snapshot.hasData && snapshot.data != null) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final subject = snapshot.data![index];
-                return OpenContainer(
-                  closedBuilder: (context, action) {
-                    return SubjectCard(subject: subject);
-                  },
-                  openBuilder: (context, action) {
-                    // return GameOfLevelScreen(subject: subject);
-                    return TableOfSubjectScreen(subject: subject);
-                  },
-                );
-              },
-            );
-          }
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
 
-          return const Text('Future is null or in unexpected state.');
-        },
+    return Padding(
+      padding: .symmetric(vertical: 10),
+      child: OpenContainer(
+        closedColor: cs.surface,
+        openColor: cs.surface,
+        closedShape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+        ),
+        transitionType: .fadeThrough,
+        closedBuilder: (context, action) => Padding(
+          padding: .all(30),
+          child: SubjectCard(subject: subject),
+        ),
+        openBuilder: (context, action) =>
+            TableOfSubjectScreen(subject: subject),
       ),
-
- */
+    );
+  }
+}

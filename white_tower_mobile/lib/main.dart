@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:white_tower_mobile/themes/common.dart';
 import 'package:white_tower_mobile/themes/primary.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:white_tower_mobile/routes.dart';
 
 part 'main.g.dart';
 
@@ -25,13 +26,15 @@ void main() async {
 
   runApp(
     ProviderScope(
-      child: MaterialApp(
+      child: MaterialApp.router(
         theme: ThemeData(
+          fontFamily: 'SmileySans',
           colorScheme: primaryColorScheme,
           textTheme: defaultTextTheme,
         ),
+        themeMode: ThemeMode.light,
         title: '白塔',
-        home: const SubjectListScreen(),
+        routerConfig: router,
       ),
     ),
   );

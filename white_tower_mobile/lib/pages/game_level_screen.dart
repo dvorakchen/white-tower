@@ -217,10 +217,7 @@ class _GameOfLevelScreen extends State<GameOfLevelScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('打败精英怪'),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: AppBar(title: const Text('打败精英怪'), backgroundColor: Colors.blue),
       body: Column(
         children: <Widget>[
           // 4. 图片和拖拽目标区域 (使用 Expanded 占据大部分空间)
@@ -250,7 +247,7 @@ class _GameOfLevelScreen extends State<GameOfLevelScreen> {
           const Divider(height: 1, thickness: 1),
           // 5. 拖拽选项区域 (使用 Padding 和 Row 布局)
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const .all(16.0),
             child: Wrap(
               spacing: 16.0,
               runSpacing: 8.0,
@@ -259,7 +256,7 @@ class _GameOfLevelScreen extends State<GameOfLevelScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const .all(16),
             child: ElevatedButton(
               onPressed: () => {
                 Navigator.of(context).pushReplacement(
