@@ -36,10 +36,13 @@ Map<String, dynamic> _$TableOfSubjectToJson(TableOfSubject instance) =>
 
 TableLevel _$TableLevelFromJson(Map<String, dynamic> json) => TableLevel(
   id: (json['id'] as num).toInt(),
+  subjectId: (json['subjectId'] as num).toInt(),
   title: json['title'] as String,
   parentId: (json['parentId'] as num?)?.toInt(),
   type: json['type'] as String,
   orderInParent: (json['orderInParent'] as num).toInt(),
+  isUsed: json['isUsed'] as bool? ?? true,
+  isValid: json['isValid'] as bool? ?? true,
   children:
       (json['children'] as List<dynamic>?)
           ?.map((e) => TableLevel.fromJson(e as Map<String, dynamic>))
@@ -50,9 +53,12 @@ TableLevel _$TableLevelFromJson(Map<String, dynamic> json) => TableLevel(
 Map<String, dynamic> _$TableLevelToJson(TableLevel instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'subjectId': instance.subjectId,
       'title': instance.title,
       'parentId': instance.parentId,
       'type': instance.type,
       'orderInParent': instance.orderInParent,
+      'isUsed': instance.isUsed,
+      'isValid': instance.isValid,
       'children': instance.children,
     };

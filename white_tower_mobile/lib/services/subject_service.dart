@@ -38,18 +38,24 @@ class TableOfSubject {
 @JsonSerializable()
 class TableLevel {
   final int id;
+  final int subjectId;
   final String title;
   final int? parentId;
   final String type;
   final int orderInParent;
+  bool isUsed;
+  bool isValid;
   final List<TableLevel> children;
 
   TableLevel({
     required this.id,
+    required this.subjectId,
     required this.title,
     required this.parentId,
     required this.type,
     required this.orderInParent,
+    this.isUsed = true,
+    this.isValid = true,
     this.children = const [],
   });
 
@@ -131,6 +137,7 @@ class MedicineSubject implements SubjectService {
     final rootLevels = [
       TableLevel(
         id: 201,
+        subjectId: 1000,
         parentId: 200,
         type: 'Section',
         orderInParent: 2,
@@ -138,6 +145,7 @@ class MedicineSubject implements SubjectService {
         children: [
           TableLevel(
             id: 202,
+            subjectId: 1000,
             parentId: 201,
             type: 'Appendix',
             orderInParent: 1,
@@ -147,6 +155,7 @@ class MedicineSubject implements SubjectService {
       ),
       TableLevel(
         id: 203,
+        subjectId: 1000,
         parentId: 200,
         type: 'Section',
         orderInParent: 1,
@@ -154,6 +163,7 @@ class MedicineSubject implements SubjectService {
       ),
       TableLevel(
         id: 204,
+        subjectId: 1000,
         parentId: 200,
         type: 'Section',
         orderInParent: 1,
@@ -161,6 +171,7 @@ class MedicineSubject implements SubjectService {
       ),
       TableLevel(
         id: 205,
+        subjectId: 1000,
         parentId: 200,
         type: 'Section',
         orderInParent: 1,
@@ -168,6 +179,7 @@ class MedicineSubject implements SubjectService {
       ),
       TableLevel(
         id: 206,
+        subjectId: 1000,
         parentId: 200,
         type: 'Chapter',
         orderInParent: 1,
@@ -175,6 +187,7 @@ class MedicineSubject implements SubjectService {
       ),
       TableLevel(
         id: 207,
+        subjectId: 1000,
         parentId: 200,
         type: 'Chapter',
         orderInParent: 1,
@@ -182,6 +195,7 @@ class MedicineSubject implements SubjectService {
       ),
       TableLevel(
         id: 208,
+        subjectId: 1000,
         parentId: 200,
         type: 'Section',
         orderInParent: 1,
@@ -189,6 +203,7 @@ class MedicineSubject implements SubjectService {
       ),
       TableLevel(
         id: 209,
+        subjectId: 1000,
         parentId: 200,
         type: 'Section',
         orderInParent: 1,
@@ -196,6 +211,7 @@ class MedicineSubject implements SubjectService {
       ),
       TableLevel(
         id: 210,
+        subjectId: 1000,
         parentId: 200,
         type: 'Section',
         orderInParent: 1,

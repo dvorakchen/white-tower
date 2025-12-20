@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:white_tower_mobile/themes/common.dart';
 
-const Color primaryOrange = Color.fromARGB(255, 247, 124, 1); // 活泼的橙色
+const Color primary = Color.fromARGB(255, 30, 41, 136); // 活泼的橙色
 const Color onPrimaryWhite = white; // Primary 上的文字为白色
 
 const Color secondary = Color(0xff5EA600);
@@ -21,10 +21,10 @@ var primaryColorScheme = ColorScheme(
   brightness: Brightness.light,
 
   // --- 核心颜色 ---
-  primary: primaryOrange,
+  primary: primary,
   onPrimary: onPrimaryWhite,
-  primaryContainer: Color.lerp(primaryOrange, Colors.white, 0.7),
-  onPrimaryContainer: primaryOrange,
+  primaryContainer: Color.lerp(primary, Colors.white, 0.7),
+  onPrimaryContainer: primary,
 
   secondary: secondary, // 您指定的 secondary 背景色
   onSecondary: onSsecondary, // 您指定的 secondary 前景色

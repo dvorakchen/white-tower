@@ -5,12 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:white_tower_mobile/models/pagination.dart';
-import 'package:white_tower_mobile/pages/game_level_screen.dart';
-import 'package:white_tower_mobile/services/question_service.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
-import 'package:circular_page_transition/circular_page_transition.dart';
 import 'package:white_tower_mobile/themes/common.dart';
-import 'package:white_tower_mobile/widgets/answering/choice.dart';
 import 'package:white_tower_mobile/widgets/subject_card.dart';
 
 part 'table_of_subject_screen.g.dart';
@@ -108,16 +104,98 @@ class GameLevelList extends StatelessWidget {
             reverse: true,
             itemCount: state.list.length + (state.isLoading ? 1 : 0),
             itemBuilder: (context, index) {
-              if (state.isLoading && index == state.list.length ) {
-                return Center(
-                  child: Text('Loading')
-                );
+              if (state.isLoading && index == state.list.length) {
+                return Center(child: Text('Loading'));
               }
               final item = state.list[index];
-              return Container(padding: .all(30), child: Text(item.title));
+              return EnabledGameLevelItem(index: index, tableLevel: item);
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class EnabledGameLevelItem extends HookConsumerWidget {
+  final int index;
+  final TableLevel tableLevel;
+  const EnabledGameLevelItem({
+    super.key,
+    required this.index,
+    required this.tableLevel,
+  });
+
+  final double _baseOffset = 100.0;
+  final int _maxOffsetSteps = 2;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPressing = useState(false);
+    final cs = Theme.of(context).colorScheme;
+    final int cycleIndex = index % 4;
+    final int steps = _maxOffsetSteps - (cycleIndex - _maxOffsetSteps).abs();
+    final double leftPadding = steps * _baseOffset;
+
+    // 根据状态动态计算样式
+    const double buttonSize = 80.0;
+    final double elevation = isPressing.value ? 1.0 : 5.0;
+    final Color backgroundColor = isPressing.value
+        ? disabled
+        : cs.primaryContainer;
+    final Color iconColor = isPressing.value ? white : cs.primary;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(40, 20, 0, 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SizedBox(width: leftPadding),
+              Column(
+                crossAxisAlignment: .start,
+                spacing: 10,
+                children: [
+                  GestureDetector(
+                    onTapDown: (_) {
+                      isPressing.value = true;
+                      context.go(
+                        '/subjects/${tableLevel.subjectId}/games/${tableLevel.id}',
+                      );
+                    },
+                    onTapUp: (_) {
+                      isPressing.value = false;
+                    },
+                    onTapCancel: () {
+                      isPressing.value = false;
+                    },
+                    child: Material(
+                      type: .circle, // 设置为圆形
+                      color: backgroundColor,
+                      elevation: elevation, // 动态阴影
+                      shadowColor: cs.shadow,
+                      child: Container(
+                        width: buttonSize,
+                        height: buttonSize,
+                        alignment: .center,
+                        child: Icon(Icons.star, size: 40.0, color: iconColor),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: buttonSize,
+                    child: Text(
+                      tableLevel.title,
+                      maxLines: 2, // 限制行数，避免垂直方向上的溢出
+                      overflow: .ellipsis, // 水平方向溢出时显示省略号
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
