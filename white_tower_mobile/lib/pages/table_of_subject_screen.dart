@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:white_tower_mobile/models/pagination.dart';
+import 'package:white_tower_mobile/pages/start_game_screen.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
 import 'package:white_tower_mobile/themes/common.dart';
+import 'package:white_tower_mobile/widgets/show_loading.dart';
 import 'package:white_tower_mobile/widgets/subject_card.dart';
 
 part 'table_of_subject_screen.g.dart';
@@ -18,19 +20,27 @@ class TableOfSubjectScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(tableOfSubjectPaginationProvider(subject.id));
-    final notifier = ref.read(
-      tableOfSubjectPaginationProvider(subject.id).notifier,
-    );
-
-    useEffect(() {
-      notifier.fetchList();
-    }, []);
+    // final notifier = ref.read(
+    //   tableOfSubjectPaginationProvider(subject.id).notifier,
+    // );
 
     return SafeArea(
       child: Column(
         children: [
           TopNav(subject: subject),
-          GameLevelList(state: state),
+          state.when(
+            loading: () => const ShowLoading(),
+
+            // 2. 加载失败状态
+            error: (err, stack) => ShowError(error: err),
+            data: (list) {
+              if (list.list.isEmpty) {
+                return const Center(child: Text('本关卡暂无题目'));
+              }
+              // 数据加载成功，渲染第一个题目或题目列表
+              return GameLevelList(state: list);
+            },
+          ),
         ],
       ),
     );
@@ -203,41 +213,40 @@ class EnabledGameLevelItem extends HookConsumerWidget {
 
 @riverpod
 class TableOfSubjectPagination extends _$TableOfSubjectPagination {
-  late SubjectService subjectService;
+  late SubjectService service;
 
   @override
-  Pagination<TableLevel> build(int subjectId) {
-    subjectService = GetIt.instance<SubjectService>();
-    return Pagination(
-      list: [],
-      currentPage: 0,
-      isLoading: false,
-      hasMore: true,
-    );
-  }
-
-  Future<void> fetchList() async {
-    state.isLoading = true;
-    state = await subjectService.fetchTableOfSubjectBySubjectId(
+  Future<Pagination<TableLevel>> build(int subjectId) async {
+    service = GetIt.instance<SubjectService>();
+    return service.fetchTableOfSubjectBySubjectId(
       subjectId,
       1,
       Pagination.defaultSize,
     );
-    state.isLoading = false;
   }
 
-  Future<void> nextPage() async {
-    state.isLoading = true;
-    final res = await subjectService.fetchTableOfSubjectBySubjectId(
-      subjectId,
-      state.currentPage + 1,
-      state.size,
-    );
+  // Future<void> fetchList() async {
+  //   state.isLoading = true;
+  //   state = await service.fetchTableOfSubjectBySubjectId(
+  //     subjectId,
+  //     1,
+  //     Pagination.defaultSize,
+  //   );
+  //   state.isLoading = false;
+  // }
 
-    state.currentPage = res.currentPage;
-    state.size = res.size;
-    state.hasMore = res.hasMore;
-    state.list.addAll(res.list);
-    state.isLoading = false;
-  }
+  // Future<void> nextPage() async {
+  //   state.isLoading = true;
+  //   final res = await service.fetchTableOfSubjectBySubjectId(
+  //     subjectId,
+  //     state.currentPage + 1,
+  //     state.size,
+  //   );
+
+  //   state.currentPage = res.currentPage;
+  //   state.size = res.size;
+  //   state.hasMore = res.hasMore;
+  //   state.list.addAll(res.list);
+  //   state.isLoading = false;
+  // }
 }

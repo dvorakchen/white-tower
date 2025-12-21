@@ -14,7 +14,10 @@ const tableOfSubjectPaginationProvider = TableOfSubjectPaginationFamily._();
 
 final class TableOfSubjectPaginationProvider
     extends
-        $NotifierProvider<TableOfSubjectPagination, Pagination<TableLevel>> {
+        $AsyncNotifierProvider<
+          TableOfSubjectPagination,
+          Pagination<TableLevel>
+        > {
   const TableOfSubjectPaginationProvider._({
     required TableOfSubjectPaginationFamily super.from,
     required int super.argument,
@@ -40,14 +43,6 @@ final class TableOfSubjectPaginationProvider
   @override
   TableOfSubjectPagination create() => TableOfSubjectPagination();
 
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Pagination<TableLevel> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Pagination<TableLevel>>(value),
-    );
-  }
-
   @override
   bool operator ==(Object other) {
     return other is TableOfSubjectPaginationProvider &&
@@ -61,15 +56,15 @@ final class TableOfSubjectPaginationProvider
 }
 
 String _$tableOfSubjectPaginationHash() =>
-    r'4bfa49718967dc8382a2fc8d8937e60b7471f868';
+    r'22a4fe6bb1a03a886652e798bd1a36de4372d1f1';
 
 final class TableOfSubjectPaginationFamily extends $Family
     with
         $ClassFamilyOverride<
           TableOfSubjectPagination,
+          AsyncValue<Pagination<TableLevel>>,
           Pagination<TableLevel>,
-          Pagination<TableLevel>,
-          Pagination<TableLevel>,
+          FutureOr<Pagination<TableLevel>>,
           int
         > {
   const TableOfSubjectPaginationFamily._()
@@ -89,22 +84,26 @@ final class TableOfSubjectPaginationFamily extends $Family
 }
 
 abstract class _$TableOfSubjectPagination
-    extends $Notifier<Pagination<TableLevel>> {
+    extends $AsyncNotifier<Pagination<TableLevel>> {
   late final _$args = ref.$arg as int;
   int get subjectId => _$args;
 
-  Pagination<TableLevel> build(int subjectId);
+  FutureOr<Pagination<TableLevel>> build(int subjectId);
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build(_$args);
     final ref =
-        this.ref as $Ref<Pagination<TableLevel>, Pagination<TableLevel>>;
+        this.ref
+            as $Ref<AsyncValue<Pagination<TableLevel>>, Pagination<TableLevel>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<Pagination<TableLevel>, Pagination<TableLevel>>,
-              Pagination<TableLevel>,
+              AnyNotifier<
+                AsyncValue<Pagination<TableLevel>>,
+                Pagination<TableLevel>
+              >,
+              AsyncValue<Pagination<TableLevel>>,
               Object?,
               Object?
             >;

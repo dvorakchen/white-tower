@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:white_tower_mobile/net/http.dart';
-import 'package:white_tower_mobile/pages/subject_list_screen.dart';
+import 'package:white_tower_mobile/services/question_service.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:white_tower_mobile/themes/common.dart';
 import 'package:white_tower_mobile/themes/primary.dart';
@@ -45,24 +44,5 @@ void registerDependencies() {
   final String baseUrl = dotenv.env['BASE_URL']!;
   getit.registerSingleton<Http>(DioHttp(baseUrl));
   getit.registerFactory<SubjectService>(() => MedicineSubject(getit<Http>()));
-}
-
-class PodPage extends HookConsumerWidget {
-  const PodPage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final counter = useState(0);
-
-    final String value = ref.watch(helloWorldProvider);
-
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: primaryColorScheme,
-        textTheme: defaultTextTheme,
-      ),
-      title: '肺部结构',
-      home: const SubjectListScreen(),
-    );
-  }
+  getit.registerFactory<QuestionService>(() => MedicineQuestionService(getit<Http>()));
 }

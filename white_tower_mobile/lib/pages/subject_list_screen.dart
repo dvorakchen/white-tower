@@ -3,11 +3,11 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:white_tower_mobile/models/pagination.dart';
 import 'package:white_tower_mobile/pages/table_of_subject_screen.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
 import 'package:white_tower_mobile/themes/common.dart';
+import 'package:white_tower_mobile/widgets/show_loading.dart';
 import 'package:white_tower_mobile/widgets/subject_card.dart';
 
 // 定义强调色
@@ -50,16 +50,7 @@ class SubjectListScreen extends HookConsumerWidget {
       body: Container(
         padding: .symmetric(horizontal: 20),
         child: asyncSubjectList.when(
-          loading: () => Padding(
-            padding: .only(bottom: 80),
-            child: Center(
-              child: SizedBox(
-                width: 320,
-                height: 320,
-                child: Lottie.asset('assets/animations/loading.json'),
-              ),
-            ),
-          ),
+          loading: () => const ShowLoading(),
           error: (error, stackTrace) => Text('Error $error'),
           data: (data) => ListView.builder(
             itemCount: data.list.length,
