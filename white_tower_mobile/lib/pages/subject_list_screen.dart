@@ -30,7 +30,7 @@ class SubjectListScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: white,
+        backgroundColor: CommonColor.white,
         elevation: 0,
         centerTitle: true,
         title: const Text(
@@ -46,7 +46,7 @@ class SubjectListScreen extends HookConsumerWidget {
           ),
         ],
       ),
-      backgroundColor: white,
+      backgroundColor: CommonColor.white,
       body: Container(
         padding: .symmetric(horizontal: 20),
         child: asyncSubjectList.when(

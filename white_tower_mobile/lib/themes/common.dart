@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 
-const Color white = Color(0xffFAFAFA);
-const Color black = Color.fromARGB(255, 28, 28, 28);
-
-const Color disabled = Color.fromARGB(255, 204, 204, 204);
-const Color onDisabled = Color.fromARGB(255, 177, 177, 177);
+class CommonColor {
+  static Color white = Color(0xffFAFAFA);
+  static Color black = Color.fromARGB(255, 28, 28, 28);
+  static Color disabled = Color.fromARGB(255, 204, 204, 204);
+  static Color onDisabled = Color.fromARGB(255, 177, 177, 177);
+  static Color success = Color.fromARGB(255, 66, 230, 51);
+  static Color onSuccess = Color(0xffFAFAFA);
+}
 
 var _baseTextTheme = ThemeData.light().textTheme;
 
 TextTheme defaultTextTheme = ThemeData.light().textTheme.copyWith(
   bodyMedium: _baseTextTheme.bodyMedium?.copyWith(
     fontSize: 18.0,
-    color: black, // 可以同时设置其他属性，如颜色
+    color: CommonColor.black,
   ),
   // 修改 headlineLarge (例如用于标题或大型文本)
   headlineLarge: _baseTextTheme.headlineLarge?.copyWith(

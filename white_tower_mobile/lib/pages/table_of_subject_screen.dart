@@ -8,6 +8,7 @@ import 'package:white_tower_mobile/models/pagination.dart';
 import 'package:white_tower_mobile/pages/start_game_screen.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
 import 'package:white_tower_mobile/themes/common.dart';
+import 'package:white_tower_mobile/widgets/show_error.dart';
 import 'package:white_tower_mobile/widgets/show_loading.dart';
 import 'package:white_tower_mobile/widgets/subject_card.dart';
 
@@ -29,7 +30,8 @@ class TableOfSubjectScreen extends HookConsumerWidget {
         children: [
           TopNav(subject: subject),
           state.when(
-            loading: () => const ShowLoading(),
+            loading: () =>
+                const Padding(padding: .only(top: 80), child: ShowLoading()),
 
             // 2. 加载失败状态
             error: (err, stack) => ShowError(error: err),
@@ -84,7 +86,7 @@ class TopNav extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: black.withAlpha(35),
+                  color: CommonColor.black.withAlpha(35),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, 4),
@@ -151,9 +153,9 @@ class EnabledGameLevelItem extends HookConsumerWidget {
     const double buttonSize = 80.0;
     final double elevation = isPressing.value ? 1.0 : 5.0;
     final Color backgroundColor = isPressing.value
-        ? disabled
+        ? CommonColor.disabled
         : cs.primaryContainer;
-    final Color iconColor = isPressing.value ? white : cs.primary;
+    final Color iconColor = isPressing.value ? CommonColor.white : cs.primary;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(40, 20, 0, 30),
@@ -171,7 +173,7 @@ class EnabledGameLevelItem extends HookConsumerWidget {
                     onTapDown: (_) {
                       isPressing.value = true;
                       context.go(
-                        '/subjects/${tableLevel.subjectId}/games/${tableLevel.id}',
+                        '/subjects/${tableLevel.subjectId}/games/${tableLevel.id}/${tableLevel.title}',
                       );
                     },
                     onTapUp: (_) {

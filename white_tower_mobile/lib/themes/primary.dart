@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:white_tower_mobile/themes/common.dart';
 
 const Color primary = Color.fromARGB(255, 30, 41, 136); // 活泼的橙色
-const Color onPrimaryWhite = white; // Primary 上的文字为白色
+final Color onPrimaryWhite = CommonColor.white; // Primary 上的文字为白色
 
 const Color secondary = Color(0xff5EA600);
-const Color onSsecondary = white;
+final Color onSsecondary = CommonColor.white;
 
 const Color tertiary = Color.fromARGB(255, 48, 131, 255); // 第三色，通常用于强调或平衡
-const Color onTertiary = white;
+final Color onTertiary = CommonColor.white;
 
-const Color surfaceWhite = white; // Surface (背景) 为白色
-const Color onSurfaceBlack = black; // Surface 上的文字为黑色
+final Color surfaceWhite = CommonColor.white; // Surface (背景) 为白色
+final Color onSurfaceBlack = CommonColor.black; // Surface 上的文字为黑色
 
 const Color errorRed = Color.fromARGB(255, 240, 21, 61); // 错误色为红色
-const Color onErrorWhite = white; // Error 上的文字为白色
+final Color onErrorWhite = CommonColor.white; // Error 上的文字为白色
 
 var primaryColorScheme = ColorScheme(
   // 必需字段：指定主题亮度
