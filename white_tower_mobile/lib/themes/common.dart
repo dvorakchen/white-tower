@@ -5,7 +5,7 @@ class CommonColor {
   static Color black = Color.fromARGB(255, 28, 28, 28);
   static Color disabled = Color.fromARGB(255, 204, 204, 204);
   static Color onDisabled = Color.fromARGB(255, 177, 177, 177);
-  static Color success = Color.fromARGB(255, 66, 230, 51);
+  static Color success = Color.fromARGB(255, 63, 219, 48);
   static Color onSuccess = Color(0xffFAFAFA);
 }
 

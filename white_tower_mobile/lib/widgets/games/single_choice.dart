@@ -24,7 +24,9 @@ class SingleChoice extends HookConsumerWidget {
           QuestionTitle(title: model.question),
           Character(),
           SizedBox(height: 50),
-          Expanded(child: AnswerList(model: model)),
+          Expanded(
+            child: AnswerList(model: model, onSelected: onSelected),
+          ),
         ],
       ),
     );
@@ -220,8 +222,9 @@ class Character extends StatelessWidget {
 
 class AnswerList extends HookConsumerWidget {
   final GameQuestionModel model;
+  final void Function(String) onSelected;
 
-  AnswerList({super.key, required this.model});
+  AnswerList({super.key, required this.model, required this.onSelected});
 
   final selectedAnswer = useState('');
 
@@ -231,10 +234,11 @@ class AnswerList extends HookConsumerWidget {
     }
 
     selectedAnswer.value = value;
-    if (model.answers.contains(value)) {
-      debugPrint('Correct');
-    }
-    debugPrint(value);
+    onSelected(value);
+    // if (model.answers.contains(value)) {
+    //   debugPrint('Correct');
+    // }
+    // debugPrint(value);
   }
 
   @override
@@ -248,18 +252,17 @@ class AnswerList extends HookConsumerWidget {
         itemBuilder: (context, index) {
           final item = model.options[index];
 
-          var bgColor =
-              model.answers.contains(selectedAnswer.value) &&
-                  selectedAnswer.value == item
-              ? Color.lerp(CommonColor.success, Colors.white, 0.85)!
-              : cs.surface;
-          var borderColor =
-              model.answers.contains(selectedAnswer.value) &&
-                  selectedAnswer.value == item
-              ? CommonColor.success
-              : Colors.grey.shade300;
+          var bgColor = cs.surface;
+          var borderColor = Colors.grey.shade300;
 
-          
+          if (selectedAnswer.value == item && model.answers.contains(item)) {
+            bgColor = Color.lerp(CommonColor.success, Colors.white, 0.85)!;
+            borderColor = CommonColor.success;
+          } else if (selectedAnswer.value == item &&
+              !model.answers.contains(item)) {
+            bgColor = cs.errorContainer;
+            borderColor = cs.onErrorContainer;
+          }
 
           return GestureDetector(
             onTap: () => onTapAnswer(item),

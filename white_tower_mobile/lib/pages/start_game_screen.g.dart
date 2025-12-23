@@ -9,6 +9,111 @@ part of 'start_game_screen.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(PageCtl)
+const pageCtlProvider = PageCtlProvider._();
+
+final class PageCtlProvider extends $NotifierProvider<PageCtl, void> {
+  const PageCtlProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'pageCtlProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$pageCtlHash();
+
+  @$internal
+  @override
+  PageCtl create() => PageCtl();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
+String _$pageCtlHash() => r'd8fc3811f0182c6fcc9ea309d7d1305e927788fc';
+
+abstract class _$PageCtl extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build();
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}
+
+@ProviderFor(AnswerResult)
+const answerResultProvider = AnswerResultProvider._();
+
+final class AnswerResultProvider
+    extends $NotifierProvider<AnswerResult, AnswerResultState> {
+  const AnswerResultProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'answerResultProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$answerResultHash();
+
+  @$internal
+  @override
+  AnswerResult create() => AnswerResult();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AnswerResultState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AnswerResultState>(value),
+    );
+  }
+}
+
+String _$answerResultHash() => r'bcc0a6cbca2bfb0fca837331ec0e0ed097d7c17d';
+
+abstract class _$AnswerResult extends $Notifier<AnswerResultState> {
+  AnswerResultState build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AnswerResultState, AnswerResultState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AnswerResultState, AnswerResultState>,
+              AnswerResultState,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
 @ProviderFor(GameQuestion)
 const gameQuestionProvider = GameQuestionFamily._();
 
@@ -50,7 +155,7 @@ final class GameQuestionProvider
   }
 }
 
-String _$gameQuestionHash() => r'd671a25a5a7fb6a8466317cb7917133f412ff0e8';
+String _$gameQuestionHash() => r'553fa832680521e0755e883918f5f93df5c3d2ee';
 
 final class GameQuestionFamily extends $Family
     with
