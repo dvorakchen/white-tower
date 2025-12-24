@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:white_tower_mobile/services/audio_service.dart';
 import 'package:white_tower_mobile/services/question_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:white_tower_mobile/themes/common.dart';
@@ -16,7 +17,7 @@ class StartGameScreen extends HookConsumerWidget {
   final int tableLevelId;
   final String tableLevelTitle;
 
-  const StartGameScreen({
+  StartGameScreen({
     super.key,
     required this.tableLevelId,
     required this.tableLevelTitle,
@@ -26,11 +27,21 @@ class StartGameScreen extends HookConsumerWidget {
     context.pop();
   }
 
+  final GlobalKey _messageKey = GlobalKey();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final state = ref.watch(gameQuestionProvider(tableLevelId));
     final answerResultState = ref.watch(answerResultProvider);
+    var height = 230.0;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_messageKey.currentContext != null) {
+        final renderBox =
+            _messageKey.currentContext!.findRenderObject() as RenderBox;
+        height = renderBox.size.height;
+      }
+    });
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -74,10 +85,11 @@ class StartGameScreen extends HookConsumerWidget {
           AnimatedPositioned(
             duration: const Duration(milliseconds: 100),
             curve: Curves.ease,
-            bottom: answerResultState.isShowMessage ? 0 : -160,
+            bottom: answerResultState.isShowMessage ? 0 : -height,
             left: 0,
             right: 0,
             child: AnswerResultMessage(
+              key: _messageKey,
               type: answerResultState.answerResultMessageType,
             ),
           ),
@@ -98,7 +110,8 @@ class AnswerResultMessage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final pageCtl = ref.read(pageCtlProvider.notifier);
-    final answerResult = ref.read(answerResultProvider.notifier);
+    final answerResultNotify = ref.read(answerResultProvider.notifier);
+    final answerResultState = ref.read(answerResultProvider);
 
     final isCorrect = type == .success;
 
@@ -117,7 +130,7 @@ class AnswerResultMessage extends HookConsumerWidget {
     }
 
     void nextQuestion() {
-      answerResult.hideAnswerResultMessage();
+      answerResultNotify.hideAnswerResultMessage();
       pageCtl.getPageController()?.nextPage(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -125,7 +138,6 @@ class AnswerResultMessage extends HookConsumerWidget {
     }
 
     return Container(
-      height: 160,
       decoration: BoxDecoration(color: bgColor),
       child: DefaultTextStyle(
         style: TextStyle(color: textColor, fontWeight: .w500),
@@ -134,32 +146,43 @@ class AnswerResultMessage extends HookConsumerWidget {
           child: Column(
             mainAxisAlignment: .start,
             crossAxisAlignment: .start,
+            spacing: 20,
             children: [
               Text(
                 isCorrect ? '✔️ 回答正确！' : '✖️ 回答错误！',
                 style: TextStyle(fontSize: 24),
               ),
-              Expanded(
-                child: Align(
-                  alignment: .bottomCenter,
-                  child: GestureDetector(
-                    onTap: nextQuestion,
-                    child: Container(
-                      width: double.infinity,
-                      height: 50,
-                      padding: .all(5),
-                      decoration: BoxDecoration(
-                        color: btnBgColor,
-                        border: Border(
-                          bottom: BorderSide(color: btnBdrColor, width: 3),
-                        ),
-                        borderRadius: .circular(15),
+              if (answerResultState.errorMessage.isNotEmpty)
+                Column(
+                  mainAxisAlignment: .start,
+                  crossAxisAlignment: .start,
+                  children: [
+                    Text('正确答案：', style: TextStyle(fontSize: 18)),
+                    Text(
+                      answerResultState.errorMessage,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ],
+                ),
+              Align(
+                alignment: .bottomCenter,
+                child: GestureDetector(
+                  onTap: nextQuestion,
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    padding: .all(5),
+                    decoration: BoxDecoration(
+                      color: btnBgColor,
+                      border: Border(
+                        bottom: BorderSide(color: btnBdrColor, width: 3),
                       ),
-                      child: Center(
-                        child: Text(
-                          '继续',
-                          style: TextStyle(fontSize: 20, color: btnTxtColor),
-                        ),
+                      borderRadius: .circular(15),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '继续',
+                        style: TextStyle(fontSize: 20, color: btnTxtColor),
                       ),
                     ),
                   ),
@@ -180,15 +203,22 @@ class ShowQuestionList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final audioService = GetIt.instance<AudioService>();
+
     final answerResultNotify = ref.read(answerResultProvider.notifier);
     final pageCtl = ref.read(pageCtlProvider.notifier);
 
-    void onSingleChoiceSelected(String selectedValue, GameQuestionModel model) {
+    void onSingleChoiceSelected(
+      String selectedValue,
+      GameQuestionModel model,
+    ) async {
       debugPrint(selectedValue);
       if (model.answers.contains(selectedValue)) {
-        answerResultNotify.showAnswerResultMessage(.success);
+        await audioService.playAnswerCorrect();
+        answerResultNotify.showAnswerResultForCorrect();
       } else {
-        answerResultNotify.showAnswerResultMessage(.wrong);
+        await audioService.playAnswerWrong();
+        answerResultNotify.showAnswerResultForWrong(model.answers[0]);
       }
     }
 
@@ -235,6 +265,7 @@ class ShowQuestionList extends HookConsumerWidget {
 class AnswerResultState {
   bool isShowMessage = false;
   AnswerResultMessageType answerResultMessageType = .success;
+  String errorMessage = '';
 }
 
 @riverpod
@@ -260,14 +291,23 @@ class AnswerResult extends _$AnswerResult {
     return AnswerResultState();
   }
 
-  void showAnswerResultMessage(AnswerResultMessageType type) {
+  void showAnswerResultForCorrect() {
     state = AnswerResultState()
       ..isShowMessage = true
-      ..answerResultMessageType = type;
+      ..answerResultMessageType = .success;
+  }
+
+  void showAnswerResultForWrong(String msg) {
+    state = AnswerResultState()
+      ..isShowMessage = true
+      ..errorMessage = msg
+      ..answerResultMessageType = .wrong;
   }
 
   void hideAnswerResultMessage() {
-    state = AnswerResultState()..isShowMessage = false;
+    state = AnswerResultState()
+      ..isShowMessage = false
+      ..answerResultMessageType = state.answerResultMessageType;
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:white_tower_mobile/net/http.dart';
+import 'package:white_tower_mobile/services/audio_service.dart';
 import 'package:white_tower_mobile/services/question_service.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -44,5 +45,8 @@ void registerDependencies() {
   final String baseUrl = dotenv.env['BASE_URL']!;
   getit.registerSingleton<Http>(DioHttp(baseUrl));
   getit.registerFactory<SubjectService>(() => MedicineSubject(getit<Http>()));
-  getit.registerFactory<QuestionService>(() => MedicineQuestionService(getit<Http>()));
+  getit.registerFactory<QuestionService>(
+    () => MedicineQuestionService(getit<Http>()),
+  );
+  getit.registerSingleton<AudioService>(CommonAudioService());
 }

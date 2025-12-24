@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:white_tower_mobile/models/pagination.dart';
-import 'package:white_tower_mobile/pages/start_game_screen.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
 import 'package:white_tower_mobile/themes/common.dart';
 import 'package:white_tower_mobile/widgets/show_error.dart';
