@@ -1,14 +1,15 @@
-
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:white_tower_mobile/themes/app_colors.dart';
 
-class ShowError extends StatelessWidget {
+class ShowError extends ConsumerWidget {
   final Object error;
 
   const ShowError({super.key, required this.error});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cs = ref.read(appThemeProvider);
 
     return Center(
       child: Padding(
@@ -16,7 +17,7 @@ class ShowError extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 40, color: Colors.red),
+            Icon(Icons.error_outline, size: 40, color: cs.error),
             const SizedBox(height: 10),
             const Text(
               '问题加载失败',

@@ -1,19 +1,22 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'pagination.freezed.dart';
 
-class Pagination<T> {
-  static const int defaultSize = 50;
+@freezed
+abstract class Pagination<T> with _$Pagination<T> {
+  const factory Pagination({
+    @Default([]) List<T> list,
+    @Default(0) int currentPage,
+    @Default(0) int size,
+    @Default(false) bool isLoading,
+    @Default(true) bool hasMore,
+  }) = _Pagination;
 
-  List<T> list;
-  int currentPage;
-  int size;
-  bool isLoading;
-  bool hasMore;
-
-  Pagination({
-    required this.list,
-    required this.currentPage,
-    this.size = defaultSize,
-    required this.isLoading,
-    required this.hasMore,
-  });
+  factory Pagination.empty() => Pagination<T>(
+    list: const [],
+    currentPage: 0,
+    size: 0,
+    isLoading: false,
+    hasMore: true,
+  );
 }

@@ -13,11 +13,7 @@ part of 'table_of_subject_screen.dart';
 const tableOfSubjectPaginationProvider = TableOfSubjectPaginationFamily._();
 
 final class TableOfSubjectPaginationProvider
-    extends
-        $AsyncNotifierProvider<
-          TableOfSubjectPagination,
-          Pagination<TableLevel>
-        > {
+    extends $AsyncNotifierProvider<TableOfSubjectPagination, List<TableLevel>> {
   const TableOfSubjectPaginationProvider._({
     required TableOfSubjectPaginationFamily super.from,
     required int super.argument,
@@ -56,15 +52,15 @@ final class TableOfSubjectPaginationProvider
 }
 
 String _$tableOfSubjectPaginationHash() =>
-    r'22a4fe6bb1a03a886652e798bd1a36de4372d1f1';
+    r'fd52601f49aa76425e715ad9702a541540f67e73';
 
 final class TableOfSubjectPaginationFamily extends $Family
     with
         $ClassFamilyOverride<
           TableOfSubjectPagination,
-          AsyncValue<Pagination<TableLevel>>,
-          Pagination<TableLevel>,
-          FutureOr<Pagination<TableLevel>>,
+          AsyncValue<List<TableLevel>>,
+          List<TableLevel>,
+          FutureOr<List<TableLevel>>,
           int
         > {
   const TableOfSubjectPaginationFamily._()
@@ -84,26 +80,22 @@ final class TableOfSubjectPaginationFamily extends $Family
 }
 
 abstract class _$TableOfSubjectPagination
-    extends $AsyncNotifier<Pagination<TableLevel>> {
+    extends $AsyncNotifier<List<TableLevel>> {
   late final _$args = ref.$arg as int;
   int get subjectId => _$args;
 
-  FutureOr<Pagination<TableLevel>> build(int subjectId);
+  FutureOr<List<TableLevel>> build(int subjectId);
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build(_$args);
     final ref =
-        this.ref
-            as $Ref<AsyncValue<Pagination<TableLevel>>, Pagination<TableLevel>>;
+        this.ref as $Ref<AsyncValue<List<TableLevel>>, List<TableLevel>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                AsyncValue<Pagination<TableLevel>>,
-                Pagination<TableLevel>
-              >,
-              AsyncValue<Pagination<TableLevel>>,
+              AnyNotifier<AsyncValue<List<TableLevel>>, List<TableLevel>>,
+              AsyncValue<List<TableLevel>>,
               Object?,
               Object?
             >;

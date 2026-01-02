@@ -6,10 +6,10 @@ import 'package:white_tower_mobile/services/audio_service.dart';
 import 'package:white_tower_mobile/services/question_service.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:white_tower_mobile/themes/common.dart';
-import 'package:white_tower_mobile/themes/primary.dart';
+import 'package:white_tower_mobile/themes/app_colors.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:white_tower_mobile/routes.dart';
+import 'package:flutter/services.dart';
 
 part 'main.g.dart';
 
@@ -22,19 +22,45 @@ void main() async {
   await dotenv.load(fileName: "assets/config/.env");
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
   registerDependencies();
+
+  const colorSchema = AppColors.light;
 
   runApp(
     ProviderScope(
-      child: MaterialApp.router(
-        theme: ThemeData(
-          fontFamily: 'SmileySans',
-          colorScheme: primaryColorScheme,
-          textTheme: defaultTextTheme,
-        ),
-        themeMode: ThemeMode.light,
-        title: '白塔',
+      child: WidgetsApp.router(
         routerConfig: router,
+        builder: (context, child) {
+          return Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: MediaQuery.of(context).copyWith(),
+              child: DefaultTextStyle(
+                style: TextStyle(
+                  fontFamily: 'SmileySans',
+                  fontSize: 14,
+                  color: colorSchema.baseContent,
+                ),
+                child: child!,
+              ),
+            ),
+          );
+        },
+
+        color: colorSchema.primary,
+        title: '白塔',
+        supportedLocales: const [Locale('zh', 'CN')],
       ),
     ),
   );

@@ -61,52 +61,53 @@ abstract class _$PageCtl extends $Notifier<void> {
   }
 }
 
-@ProviderFor(AnswerResult)
-const answerResultProvider = AnswerResultProvider._();
+@ProviderFor(_AnswerResult)
+const _answerResultProvider = _AnswerResultProvider._();
 
-final class AnswerResultProvider
-    extends $NotifierProvider<AnswerResult, AnswerResultState> {
-  const AnswerResultProvider._()
+final class _AnswerResultProvider
+    extends $NotifierProvider<_AnswerResult, CurrentAnswerResultState> {
+  const _AnswerResultProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'answerResultProvider',
+        name: r'_answerResultProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$answerResultHash();
+  String debugGetCreateSourceHash() => _$_answerResultHash();
 
   @$internal
   @override
-  AnswerResult create() => AnswerResult();
+  _AnswerResult create() => _AnswerResult();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AnswerResultState value) {
+  Override overrideWithValue(CurrentAnswerResultState value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AnswerResultState>(value),
+      providerOverride: $SyncValueProvider<CurrentAnswerResultState>(value),
     );
   }
 }
 
-String _$answerResultHash() => r'bcc0a6cbca2bfb0fca837331ec0e0ed097d7c17d';
+String _$_answerResultHash() => r'b6e8dcd2d035859c874f4e6c82fef2d34e3e2b67';
 
-abstract class _$AnswerResult extends $Notifier<AnswerResultState> {
-  AnswerResultState build();
+abstract class _$AnswerResult extends $Notifier<CurrentAnswerResultState> {
+  CurrentAnswerResultState build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AnswerResultState, AnswerResultState>;
+    final ref =
+        this.ref as $Ref<CurrentAnswerResultState, CurrentAnswerResultState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AnswerResultState, AnswerResultState>,
-              AnswerResultState,
+              AnyNotifier<CurrentAnswerResultState, CurrentAnswerResultState>,
+              CurrentAnswerResultState,
               Object?,
               Object?
             >;
@@ -114,39 +115,39 @@ abstract class _$AnswerResult extends $Notifier<AnswerResultState> {
   }
 }
 
-@ProviderFor(GameQuestion)
-const gameQuestionProvider = GameQuestionFamily._();
+@ProviderFor(_GameQuestion)
+const _gameQuestionProvider = _GameQuestionFamily._();
 
-final class GameQuestionProvider
-    extends $AsyncNotifierProvider<GameQuestion, List<GameQuestionModel>> {
-  const GameQuestionProvider._({
-    required GameQuestionFamily super.from,
+final class _GameQuestionProvider
+    extends $AsyncNotifierProvider<_GameQuestion, List<GameQuestionModel>> {
+  const _GameQuestionProvider._({
+    required _GameQuestionFamily super.from,
     required int super.argument,
   }) : super(
          retry: null,
-         name: r'gameQuestionProvider',
+         name: r'_gameQuestionProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$gameQuestionHash();
+  String debugGetCreateSourceHash() => _$_gameQuestionHash();
 
   @override
   String toString() {
-    return r'gameQuestionProvider'
+    return r'_gameQuestionProvider'
         ''
         '($argument)';
   }
 
   @$internal
   @override
-  GameQuestion create() => GameQuestion();
+  _GameQuestion create() => _GameQuestion();
 
   @override
   bool operator ==(Object other) {
-    return other is GameQuestionProvider && other.argument == argument;
+    return other is _GameQuestionProvider && other.argument == argument;
   }
 
   @override
@@ -155,31 +156,31 @@ final class GameQuestionProvider
   }
 }
 
-String _$gameQuestionHash() => r'553fa832680521e0755e883918f5f93df5c3d2ee';
+String _$_gameQuestionHash() => r'77aeb2cb5de463ea2fc633b2e5b5ffc67946643d';
 
-final class GameQuestionFamily extends $Family
+final class _GameQuestionFamily extends $Family
     with
         $ClassFamilyOverride<
-          GameQuestion,
+          _GameQuestion,
           AsyncValue<List<GameQuestionModel>>,
           List<GameQuestionModel>,
           FutureOr<List<GameQuestionModel>>,
           int
         > {
-  const GameQuestionFamily._()
+  const _GameQuestionFamily._()
     : super(
         retry: null,
-        name: r'gameQuestionProvider',
+        name: r'_gameQuestionProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  GameQuestionProvider call(int gameLevelId) =>
-      GameQuestionProvider._(argument: gameLevelId, from: this);
+  _GameQuestionProvider call(int gameLevelId) =>
+      _GameQuestionProvider._(argument: gameLevelId, from: this);
 
   @override
-  String toString() => r'gameQuestionProvider';
+  String toString() => r'_gameQuestionProvider';
 }
 
 abstract class _$GameQuestion extends $AsyncNotifier<List<GameQuestionModel>> {

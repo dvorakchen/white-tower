@@ -4,9 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:white_tower_mobile/models/pagination.dart';
 import 'package:white_tower_mobile/services/subject_service.dart';
-import 'package:white_tower_mobile/themes/common.dart';
+import 'package:white_tower_mobile/themes/app_colors.dart';
 import 'package:white_tower_mobile/widgets/show_error.dart';
 import 'package:white_tower_mobile/widgets/show_loading.dart';
 import 'package:white_tower_mobile/widgets/subject_card.dart';
@@ -20,9 +19,6 @@ class TableOfSubjectScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(tableOfSubjectPaginationProvider(subject.id));
-    // final notifier = ref.read(
-    //   tableOfSubjectPaginationProvider(subject.id).notifier,
-    // );
 
     return SafeArea(
       child: Column(
@@ -35,10 +31,9 @@ class TableOfSubjectScreen extends HookConsumerWidget {
             // 2. 加载失败状态
             error: (err, stack) => ShowError(error: err),
             data: (list) {
-              if (list.list.isEmpty) {
+              if (list.isEmpty) {
                 return const Center(child: Text('本关卡暂无题目'));
               }
-              // 数据加载成功，渲染第一个题目或题目列表
               return GameLevelList(state: list);
             },
           ),
@@ -48,18 +43,18 @@ class TableOfSubjectScreen extends HookConsumerWidget {
   }
 }
 
-class TopNav extends StatelessWidget {
+class TopNav extends ConsumerWidget {
   final Subject subject;
 
   const TopNav({super.key, required this.subject});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cs = ref.read(appThemeProvider);
 
     return Container(
       padding: .fromLTRB(20, 20, 20, 0),
-      decoration: BoxDecoration(color: cs.surface),
+      decoration: BoxDecoration(color: cs.base100),
       child: Column(
         spacing: 20,
         children: [
@@ -81,11 +76,11 @@ class TopNav extends StatelessWidget {
           Container(
             padding: .all(15),
             decoration: BoxDecoration(
-              color: cs.surface,
+              color: cs.base100,
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: CommonColor.black.withAlpha(35),
+                  color: cs.black.withAlpha(35),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, 4),
@@ -101,7 +96,7 @@ class TopNav extends StatelessWidget {
 }
 
 class GameLevelList extends StatelessWidget {
-  final Pagination<TableLevel> state;
+  final List<TableLevel> state;
 
   const GameLevelList({super.key, required this.state});
 
@@ -113,12 +108,9 @@ class GameLevelList extends StatelessWidget {
           padding: .symmetric(horizontal: 30),
           child: ListView.builder(
             reverse: true,
-            itemCount: state.list.length + (state.isLoading ? 1 : 0),
+            itemCount: state.length,
             itemBuilder: (context, index) {
-              if (state.isLoading && index == state.list.length) {
-                return Center(child: Text('Loading'));
-              }
-              final item = state.list[index];
+              final item = state[index];
               return EnabledGameLevelItem(index: index, tableLevel: item);
             },
           ),
@@ -143,7 +135,7 @@ class EnabledGameLevelItem extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPressing = useState(false);
-    final cs = Theme.of(context).colorScheme;
+    final cs = ref.read(appThemeProvider);
     final int cycleIndex = index % 4;
     final int steps = _maxOffsetSteps - (cycleIndex - _maxOffsetSteps).abs();
     final double leftPadding = steps * _baseOffset;
@@ -152,9 +144,9 @@ class EnabledGameLevelItem extends HookConsumerWidget {
     const double buttonSize = 80.0;
     final double elevation = isPressing.value ? 1.0 : 5.0;
     final Color backgroundColor = isPressing.value
-        ? CommonColor.disabled
-        : cs.primaryContainer;
-    final Color iconColor = isPressing.value ? CommonColor.white : cs.primary;
+        ? cs.disabled
+        : Color.lerp(cs.primary, Colors.white, 0.8)!;
+    final Color iconColor = isPressing.value ? Colors.white : cs.primary;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(40, 20, 0, 30),
@@ -182,10 +174,9 @@ class EnabledGameLevelItem extends HookConsumerWidget {
                       isPressing.value = false;
                     },
                     child: Material(
-                      type: .circle, // 设置为圆形
+                      type: .circle,
                       color: backgroundColor,
-                      elevation: elevation, // 动态阴影
-                      shadowColor: cs.shadow,
+                      elevation: elevation,
                       child: Container(
                         width: buttonSize,
                         height: buttonSize,
@@ -217,37 +208,8 @@ class TableOfSubjectPagination extends _$TableOfSubjectPagination {
   late SubjectService service;
 
   @override
-  Future<Pagination<TableLevel>> build(int subjectId) async {
+  Future<List<TableLevel>> build(int subjectId) async {
     service = GetIt.instance<SubjectService>();
-    return service.fetchTableOfSubjectBySubjectId(
-      subjectId,
-      1,
-      Pagination.defaultSize,
-    );
+    return service.fetchAllTableOfSubjectBySubjectId(subjectId);
   }
-
-  // Future<void> fetchList() async {
-  //   state.isLoading = true;
-  //   state = await service.fetchTableOfSubjectBySubjectId(
-  //     subjectId,
-  //     1,
-  //     Pagination.defaultSize,
-  //   );
-  //   state.isLoading = false;
-  // }
-
-  // Future<void> nextPage() async {
-  //   state.isLoading = true;
-  //   final res = await service.fetchTableOfSubjectBySubjectId(
-  //     subjectId,
-  //     state.currentPage + 1,
-  //     state.size,
-  //   );
-
-  //   state.currentPage = res.currentPage;
-  //   state.size = res.size;
-  //   state.hasMore = res.hasMore;
-  //   state.list.addAll(res.list);
-  //   state.isLoading = false;
-  // }
 }

@@ -1,53 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:white_tower_mobile/services/question_service.dart';
-import 'package:white_tower_mobile/themes/common.dart';
+import 'package:white_tower_mobile/themes/app_colors.dart';
+
+part 'single_choice.g.dart';
+part 'single_choice.freezed.dart';
+
+/// (selected value, is correct)
+typedef OnSelectCb = void Function(String, bool);
 
 class SingleChoice extends HookConsumerWidget {
   final GameQuestionModel model;
-  final void Function(String) onSelected;
+  final OnSelectCb? onSelect;
 
-  const SingleChoice({
-    super.key,
-    required this.model,
-    required this.onSelected,
-  });
+  const SingleChoice({super.key, required this.model, this.onSelect});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      Future.microtask(() {
+        ref
+            .read(_singleChoiceProvider.notifier)
+            .initialize(model: model, onSelect: onSelect);
+      });
+      return null;
+    }, const []);
+
     return Padding(
       padding: .symmetric(horizontal: 20),
       child: Column(
         spacing: 10,
         children: [
-          QuestionTitle(title: model.question),
-          Character(),
+          _QuestionBubble(title: model.question),
+          _Character(),
           SizedBox(height: 50),
-          Expanded(
-            child: AnswerList(model: model, onSelected: onSelected),
-          ),
+          Expanded(child: AnswerList()),
         ],
       ),
     );
   }
 }
 
-class QuestionTitle extends StatelessWidget {
+class _QuestionBubble extends ConsumerWidget {
   final String title;
 
-  const QuestionTitle({super.key, required this.title});
+  const _QuestionBubble({required this.title});
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cs = ref.read(appThemeProvider);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CustomPaint(
           // 尖角在下方的气泡
-          painter: BubblePainter(
+          painter: _BubblePainter(
             bubbleColor: cs.primary,
             isBottomPointer: true, // 新增参数：表示尖角是否在下方
             isRightAligned: false, // 在下方时，这个参数可能用于控制尖角的水平位置（左/中/右）
@@ -67,7 +78,7 @@ class QuestionTitle extends StatelessWidget {
             ),
             child: Text(
               title,
-              style: TextStyle(color: cs.onPrimary, fontSize: 24),
+              style: TextStyle(color: cs.primaryContent, fontSize: 24),
             ),
           ),
         ),
@@ -79,12 +90,12 @@ class QuestionTitle extends StatelessWidget {
 //
 
 /// 聊天气泡绘制器，支持尖角在下方，并添加了边框和简单的阴影来模拟立体感。
-class BubblePainter extends CustomPainter {
+class _BubblePainter extends CustomPainter {
   final Color bubbleColor;
   final bool isBottomPointer; // 尖角在下方
   final bool isRightAligned; // 仅当尖角在侧面时生效，或用于控制下方尖角的水平位置
 
-  BubblePainter({
+  _BubblePainter({
     required this.bubbleColor,
     this.isBottomPointer = false,
     this.isRightAligned = false,
@@ -194,15 +205,15 @@ class BubblePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant BubblePainter oldDelegate) {
+  bool shouldRepaint(covariant _BubblePainter oldDelegate) {
     return oldDelegate.bubbleColor != bubbleColor ||
         oldDelegate.isBottomPointer != isBottomPointer ||
         oldDelegate.isRightAligned != isRightAligned;
   }
 }
 
-class Character extends StatelessWidget {
-  const Character({super.key});
+class _Character extends StatelessWidget {
+  const _Character();
 
   @override
   Widget build(BuildContext context) {
@@ -221,47 +232,44 @@ class Character extends StatelessWidget {
 }
 
 class AnswerList extends HookConsumerWidget {
-  final GameQuestionModel model;
-  final void Function(String) onSelected;
-
-  AnswerList({super.key, required this.model, required this.onSelected});
-
-  final selectedAnswer = useState('');
-
-  void onTapAnswer(String value) {
-    if (selectedAnswer.value.isNotEmpty) {
-      return;
-    }
-
-    selectedAnswer.value = value;
-    onSelected(value);
-    // if (model.answers.contains(value)) {
-    //   debugPrint('Correct');
-    // }
-    // debugPrint(value);
-  }
+  const AnswerList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
+    var state = ref.watch(_singleChoiceProvider);
+    var notify = ref.read(_singleChoiceProvider.notifier);
+
+    final cs = ref.read(appThemeProvider);
+
+    final selectedAnswer = useState('');
+
+    void onTapAnswer(String value) {
+      if (selectedAnswer.value.isNotEmpty) {
+        return;
+      }
+
+      selectedAnswer.value = value;
+
+      notify.onSelect(value);
+    }
 
     return Container(
       padding: .symmetric(horizontal: 20),
       child: ListView.builder(
-        itemCount: model.options.length,
+        itemCount: state.metadata.options.length,
         itemBuilder: (context, index) {
-          final item = model.options[index];
+          final item = state.metadata.options[index];
 
-          var bgColor = cs.surface;
+          var bgColor = cs.base100;
           var borderColor = Colors.grey.shade300;
 
-          if (selectedAnswer.value == item && model.answers.contains(item)) {
-            bgColor = Color.lerp(CommonColor.success, Colors.white, 0.85)!;
-            borderColor = CommonColor.success;
+          if (selectedAnswer.value == item && state.metadata.answer == item) {
+            bgColor = Color.lerp(cs.success, Colors.white, 0.85)!;
+            borderColor = cs.success;
           } else if (selectedAnswer.value == item &&
-              !model.answers.contains(item)) {
-            bgColor = cs.errorContainer;
-            borderColor = cs.onErrorContainer;
+              state.metadata.answer != item) {
+            bgColor = Color.lerp(cs.error, Colors.white, 0.7)!;
+            borderColor = cs.error;
           }
 
           return GestureDetector(
@@ -283,12 +291,57 @@ class AnswerList extends HookConsumerWidget {
                     ),
                   ],
                 ),
-                child: Text(item, style: TextStyle(color: cs.onSurface)),
+                child: Text(
+                  item,
+                  style: TextStyle(color: cs.baseContent, fontSize: 20),
+                ),
               ),
             ),
           );
         },
       ),
     );
+  }
+}
+
+@freezed
+abstract class SingleChoiceState with _$SingleChoiceState {
+  factory SingleChoiceState({
+    @Default(
+      GameQuestionModel(
+        question: '',
+        metadata: {},
+        explanation: '',
+        id: 0,
+        tableLevelId: 0,
+        subjectId: 0,
+        type: .singleChoice,
+      ),
+    )
+    GameQuestionModel model,
+    @Default(MetadataSingleChoice()) MetadataSingleChoice metadata,
+    OnSelectCb? onSelect,
+  }) = _SingleChoiceState;
+}
+
+@riverpod
+class _SingleChoice extends _$SingleChoice {
+  @override
+  SingleChoiceState build() {
+    return SingleChoiceState();
+  }
+
+  void initialize({required GameQuestionModel model, OnSelectCb? onSelect}) {
+    state = state.copyWith(
+      model: model,
+      metadata: MetadataSingleChoice.fromJson(model.metadata),
+      onSelect: onSelect,
+    );
+  }
+
+  void onSelect(String value) {
+    if (state.onSelect != null) {
+      state.onSelect!(value, state.metadata.answer == value);
+    }
   }
 }

@@ -26,7 +26,7 @@ class SubjectCard extends StatelessWidget {
             children: [
               Text(
                 subject.title,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: TextStyle(fontSize: 20),
               ),
               const SizedBox(height: 4),
               Text(

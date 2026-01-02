@@ -65,17 +65,9 @@ class TableLevel {
 }
 
 abstract interface class SubjectService {
-  Future<Pagination<Subject>> fetchSubjects({
-    int? start,
-    int? count,
-    String? title,
-  });
+  Future<List<Subject>> fetchSubjects({int? start, int? count, String? title});
 
-  Future<Pagination<TableLevel>> fetchTableOfSubjectBySubjectId(
-    int subjectId,
-    int start,
-    int count,
-  );
+  Future<List<TableLevel>> fetchAllTableOfSubjectBySubjectId(int subjectId);
 }
 
 class MedicineSubject implements SubjectService {
@@ -83,7 +75,7 @@ class MedicineSubject implements SubjectService {
   MedicineSubject(this._http);
 
   @override
-  Future<Pagination<Subject>> fetchSubjects({
+  Future<List<Subject>> fetchSubjects({
     int? start,
     int? count,
     String? title,
@@ -92,42 +84,35 @@ class MedicineSubject implements SubjectService {
 
     await Future.delayed(Duration(seconds: 2));
 
-    return Pagination(
-      list: [
-        Subject(
-          id: 0,
-          title: '内科学',
-          subtitle: '涵盖循环、呼吸、消化、泌尿系统',
-          iconLink:
-              'https://images.icon-icons.com/2257/PNG/512/stethoscope_doctor_health_medical_healthcare_icon_140241.png',
-        ),
-        Subject(
-          id: 1,
-          title: '药理学',
-          subtitle: '涵盖药物代谢、作用机制、临床应用与不良反应',
-          iconLink:
-              'https://images.icon-icons.com/2313/PNG/512/pills_pill_bottle_medicine_medical_healthcare_icon_141993.png',
-        ),
+    return [
+      Subject(
+        id: 0,
+        title: '内科学',
+        subtitle: '涵盖循环、呼吸、消化、泌尿系统',
+        iconLink:
+            'https://images.icon-icons.com/2257/PNG/512/stethoscope_doctor_health_medical_healthcare_icon_140241.png',
+      ),
+      Subject(
+        id: 1,
+        title: '药理学',
+        subtitle: '涵盖药物代谢、作用机制、临床应用与不良反应',
+        iconLink:
+            'https://images.icon-icons.com/2313/PNG/512/pills_pill_bottle_medicine_medical_healthcare_icon_141993.png',
+      ),
 
-        Subject(
-          id: 2,
-          title: '诊断学',
-          subtitle: '涵盖症状学、体格检查、实验室诊断与影像学',
-          iconLink:
-              'https://images.icon-icons.com/3802/PNG/512/x_ray_bone_scan_radiography_medical_icon_233051.png',
-        ),
-      ],
-      currentPage: 1,
-      isLoading: false,
-      hasMore: true,
-    );
+      Subject(
+        id: 2,
+        title: '诊断学',
+        subtitle: '涵盖症状学、体格检查、实验室诊断与影像学',
+        iconLink:
+            'https://images.icon-icons.com/3802/PNG/512/x_ray_bone_scan_radiography_medical_icon_233051.png',
+      ),
+    ];
   }
 
   @override
-  Future<Pagination<TableLevel>> fetchTableOfSubjectBySubjectId(
+  Future<List<TableLevel>> fetchAllTableOfSubjectBySubjectId(
     int subjectId,
-    int start,
-    int count,
   ) async {
     // var data = await _http.get('path', Subject.fromJson );
 
@@ -220,11 +205,6 @@ class MedicineSubject implements SubjectService {
     ];
 
     // 返回 TableOfSubject 对象
-    return Pagination(
-      list: rootLevels,
-      currentPage: 1,
-      isLoading: false,
-      hasMore: true,
-    );
+    return rootLevels;
   }
 }
