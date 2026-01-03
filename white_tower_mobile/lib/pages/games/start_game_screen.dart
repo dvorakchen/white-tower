@@ -173,7 +173,7 @@ class _AnswerResultMessage extends HookConsumerWidget {
                   mainAxisAlignment: .start,
                   crossAxisAlignment: .start,
                   children: [
-                    Text('正确答案：', style: TextStyle(fontSize: 18)),
+                    // Text('正确答案：', style: TextStyle(fontSize: 18)),
                     Text(
                       answerResultState.message,
                       style: TextStyle(fontSize: 18),
@@ -220,7 +220,7 @@ class ShowQuestionList extends HookConsumerWidget {
         answerResultNotify.showAnswerResultForCorrect();
       } else {
         await audioService.playAnswerWrong();
-        answerResultNotify.showAnswerResultForWrong(model.explanation[0]);
+        answerResultNotify.showAnswerResultForWrong(model.explanation);
       }
 
       StartGameScreen._answerredCount++;
@@ -306,7 +306,7 @@ class _AnswerResult extends _$AnswerResult {
   }
 
   void showAnswerResultForCorrect() {
-    state = state.copyWith(isShowMessage: true, type: .success);
+    state = state.copyWith(isShowMessage: true, type: .success, message: '');
   }
 
   void showAnswerResultForWrong(String msg) {
@@ -314,7 +314,7 @@ class _AnswerResult extends _$AnswerResult {
   }
 
   void hideAnswerResultMessage() {
-    state = state.copyWith(isShowMessage: false);
+    state = state.copyWith(isShowMessage: false, message: '');
   }
 }
 

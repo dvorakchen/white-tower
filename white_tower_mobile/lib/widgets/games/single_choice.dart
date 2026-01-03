@@ -52,6 +52,7 @@ class _QuestionBubble extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = ref.read(appThemeProvider);
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +66,7 @@ class _QuestionBubble extends ConsumerWidget {
           ),
           child: Container(
             // 增大最大宽度
-            constraints: const BoxConstraints(maxWidth: 350),
+            constraints: BoxConstraints(maxWidth: screenWidth * 0.8),
             padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 10.0,
