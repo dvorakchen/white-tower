@@ -332,9 +332,12 @@ class _SingleChoice extends _$SingleChoice {
   }
 
   void initialize({required GameQuestionModel model, OnSelectCb? onSelect}) {
+    final metadata = MetadataSingleChoice.fromJson(model.metadata);
+    final options = List<String>.from(metadata.options)..shuffle();
+
     state = state.copyWith(
       model: model,
-      metadata: MetadataSingleChoice.fromJson(model.metadata),
+      metadata: metadata.copyWith(options: options),
       onSelect: onSelect,
     );
   }

@@ -191,6 +191,7 @@ class EnabledGameLevelItem extends HookConsumerWidget {
                       tableLevel.title,
                       maxLines: 2, // 限制行数，避免垂直方向上的溢出
                       overflow: .ellipsis, // 水平方向溢出时显示省略号
+                      style: TextStyle(fontSize: 18),
                     ),
                   ),
                 ],

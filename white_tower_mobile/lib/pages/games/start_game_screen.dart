@@ -9,6 +9,7 @@ import 'package:white_tower_mobile/services/audio_service.dart';
 import 'package:white_tower_mobile/services/question_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:white_tower_mobile/themes/app_colors.dart';
+import 'package:white_tower_mobile/widgets/components/button.dart';
 import 'package:white_tower_mobile/widgets/games/single_choice.dart';
 import 'package:white_tower_mobile/widgets/show_error.dart';
 import 'package:white_tower_mobile/widgets/show_loading.dart';
@@ -123,22 +124,13 @@ class _AnswerResultMessage extends HookConsumerWidget {
 
     var textColor = Color.lerp(cs.success, Colors.black, 0.5)!;
     var bgColor = Color.lerp(cs.success, Colors.white, 0.7);
-    var btnBgColor = cs.success;
-    var btnTxtColor = cs.successContent;
-    var btnBdrColor = Color.lerp(cs.success, Colors.black, 0.5)!;
 
     if (type == .wrong) {
       textColor = Color.lerp(cs.error, Colors.black, 0.5)!;
       bgColor = Color.lerp(cs.error, Colors.white, 0.7);
-      btnBgColor = cs.error;
-      btnTxtColor = cs.errorContent;
-      btnBdrColor = Color.lerp(cs.error, Colors.black, 0.5)!;
     } else if (type == .warning) {
       textColor = Color.lerp(cs.warning, Colors.black, 0.5)!;
       bgColor = Color.lerp(cs.warning, Colors.white, 0.7);
-      btnBgColor = cs.warning;
-      btnTxtColor = cs.warningContent;
-      btnBdrColor = Color.lerp(cs.warning, Colors.black, 0.5)!;
     }
 
     void nextQuestion() {
@@ -190,26 +182,10 @@ class _AnswerResultMessage extends HookConsumerWidget {
                 ),
               Align(
                 alignment: .bottomCenter,
-                child: GestureDetector(
-                  onTap: nextQuestion,
-                  child: Container(
-                    width: double.infinity,
-                    height: 50,
-                    padding: .all(5),
-                    decoration: BoxDecoration(
-                      color: btnBgColor,
-                      border: Border(
-                        bottom: BorderSide(color: btnBdrColor, width: 3),
-                      ),
-                      borderRadius: .circular(15),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '继续',
-                        style: TextStyle(fontSize: 20, color: btnTxtColor),
-                      ),
-                    ),
-                  ),
+                child: Button(
+                  onPress: nextQuestion,
+                  label: '继续',
+                  type: type == .success ? .success : .wrong,
                 ),
               ),
             ],

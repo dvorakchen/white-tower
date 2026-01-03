@@ -17,6 +17,7 @@ class GameResultItem {
 /// 答题结果
 ///
 class GameResult {
+  int subjectId = 0;
   final List<GameResultItem> list = [];
 
   void add({
